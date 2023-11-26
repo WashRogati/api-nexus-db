@@ -5,10 +5,10 @@ import cors from 'cors';
 
 const app = express();
 
-const PORT = 80;
+const PORT = 8000;
 
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost'], // allowedOrigins
+  origin: ['http://localhost:3000', 'http://localhost', 'http://10.0.0.173:8081'], // allowedOrigins
   methods: ['GET', 'POST', 'PUT'], // allowedMethods
   allowedHeaders: ['Content-Type', 'Authorization'], // allowedHeaders
   credentials: true, // allowCredentials

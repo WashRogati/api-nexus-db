@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mysqlsrv:
+    platform: linux/x86_64
+    image: mysql:5.7.32
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    ports:
+      - '3306:3306'
+    volumes:
+      - .docker/mysql/data:/var/lib/mysql
+    networks:
+      - mysql-compose-network
+networks:
+  mysql-compose-network:
+    driver: bridge

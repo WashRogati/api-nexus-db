@@ -1,0 +1,32 @@
+{
+  "name": "wash_tcc_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "author": {
+    "name": "Washington Rogati",
+    "email": "wrogati@gmail.com"
+  },
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.8.7",
+    "@types/pg": "^8.10.7",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.32.0",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.3.5"
+  },
+  "license": "ISC"
+}

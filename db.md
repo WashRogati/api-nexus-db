@@ -43,7 +43,7 @@ create table responsaveis( --alterado para o plural
     nm_bairro varchar(90) not null, --alterado tamanho para 90
     sg_uf char(12) not null,
     nm_cidade varchar(90) not null, --alterado tamanho para 90
-    id_conexao bit
+    id_conexao bit default false null
 );
 
 ```

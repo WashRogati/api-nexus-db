@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import dbInstance, { Database } from '../db/database';
+import { TABLES } from '../db/config';
+import SimpleJWT from '../jwt';
 
 const router = Router();
 
@@ -44,8 +46,58 @@ router.post('/salvarprofissional', async (req, res) => {
 router.post('/salvarresponsavel', async (req, res) => {
   try {
     /*     const { name, age, last_name } = req.body; */
-    await dbInstance.insertOne('responsavel', req.body);
+    await dbInstance.insertOne(TABLES.profissionais, req.body);
     res.json({ message: 'Registro inserido' });
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/loginProfissional', async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    const profissionais = await dbInstance.query(
+      `SELECT nm_profissional FROM ${TABLES.profissionais} where nm_email = '${email}' and nm_senha = '${senha}';`,
+    );
+
+    console.log('profissional: ', profissionais[0][0]);
+    if (profissionais[0].length > 0) {
+      const jwtHelper = new SimpleJWT();
+
+      const token = jwtHelper.createJWT({
+        type: 'profissional',
+        nome: profissionais[0][0].nm_profissional,
+      });
+
+      res.json({ message: 'logado', access_token: token });
+    } else {
+      res.status(401).json({ message: 'email ou senha inválidos' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/loginResponsavel', async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    const responsaveis = await dbInstance.query(
+      `SELECT nm_responsavel FROM ${TABLES.responsaveis} where nm_email = '${email}' and nm_senha = '${senha}';`,
+    );
+
+    console.log('responsavel: ', responsaveis[0]);
+    if (responsaveis[0].length > 0) {
+      const jwtHelper = new SimpleJWT();
+
+      const token = jwtHelper.createJWT({
+        type: 'responsavel',
+        nome: responsaveis[0][0].nm_responsavel,
+      });
+
+      res.json({ message: 'logado', access_token: token });
+    } else {
+      res.status(401).json({ message: 'email ou senha inválidos' });
+    }
   } catch (e: any) {
     console.log('err: ', e.message);
   }

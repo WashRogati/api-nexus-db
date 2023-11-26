@@ -36,7 +36,7 @@ router.post('/minharotapost', async (req, res) => {
 router.post('/salvarprofissional', async (req, res) => {
   try {
     /*     const { name, age, last_name } = req.body; */
-    await dbInstance.insertOne('profissional', req.body);
+    await dbInstance.insertOne(TABLES.profissionais, req.body);
     res.json({ message: 'Registro inserido' });
   } catch (e: any) {
     console.log('err: ', e.message);
@@ -46,7 +46,7 @@ router.post('/salvarprofissional', async (req, res) => {
 router.post('/salvarresponsavel', async (req, res) => {
   try {
     /*     const { name, age, last_name } = req.body; */
-    await dbInstance.insertOne(TABLES.profissionais, req.body);
+    await dbInstance.insertOne(TABLES.responsaveis, req.body);
     res.json({ message: 'Registro inserido' });
   } catch (e: any) {
     console.log('err: ', e.message);

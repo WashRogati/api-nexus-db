@@ -5,9 +5,7 @@ const router = Router();
 
 router.get('/minharotaget', async (req, res) => {
   try {
-    const profissionais = await dbInstance.query(
-      'SELECT * FROM profissional;',
-    );
+    const profissionais = await dbInstance.query('SELECT * FROM profissional;');
     res.json({
       data: profissionais[0],
     });
@@ -35,8 +33,18 @@ router.post('/minharotapost', async (req, res) => {
 
 router.post('/salvarprofissional', async (req, res) => {
   try {
-/*     const { name, age, last_name } = req.body; */
+    /*     const { name, age, last_name } = req.body; */
     await dbInstance.insertOne('profissional', req.body);
+    res.json({ message: 'Registro inserido' });
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/salvarresponsavel', async (req, res) => {
+  try {
+    /*     const { name, age, last_name } = req.body; */
+    await dbInstance.insertOne('responsavel', req.body);
     res.json({ message: 'Registro inserido' });
   } catch (e: any) {
     console.log('err: ', e.message);

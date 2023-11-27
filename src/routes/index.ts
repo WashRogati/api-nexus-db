@@ -152,7 +152,7 @@ router.post('/loginProfissional', async (req, res) => {
   try {
     const { email, senha } = req.body;
     const profissionais = await dbInstance.query(
-      `SELECT nm_profissional FROM ${TABLES.profissionais} where nm_email = '${email}' and nm_senha = '${senha}';`,
+      `SELECT cd_profissional, nm_profissional FROM ${TABLES.profissionais} where nm_email = '${email}' and nm_senha = '${senha}';`,
     );
 
     console.log('profissional: ', profissionais[0][0]);
@@ -162,6 +162,7 @@ router.post('/loginProfissional', async (req, res) => {
       const token = jwtHelper.createJWT({
         type: 'profissional',
         nome: profissionais[0][0].nm_profissional,
+        id: profissionais[0][0].cd_profissional,
       });
 
       res.json({ message: 'logado', access_token: token });
@@ -193,6 +194,71 @@ router.post('/loginResponsavel', async (req, res) => {
       res.json({ message: 'logado', access_token: token });
     } else {
       res.status(401).json({ message: 'email ou senha inválidos' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/salvarExercicios', async (req, res) => {
+  try {
+    await dbInstance.insertOne(TABLES.exercicios, req.body);
+    res.json({ message: 'Exercício inserido' });
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/salvarEmocoes', async (req, res) => {
+  try {
+    await dbInstance.insertOne(TABLES.emocoes, req.body);
+    res.json({ message: 'Emoção inserido' });
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.get('/profissionalListaAgendamento', async (req, res) => {
+  try {
+    const jwt = new SimpleJWT();
+    const { access_token } = req.headers;
+
+    if (typeof access_token == 'string') {
+      const decoded = jwt.getPayload(access_token);
+      console.log('decoded: ', decoded.payload);
+
+      const agendamentos = await dbInstance.query(
+        `select * from ${TABLES.agendamentos} where fk_cd_profissional = ${decoded.payload?.id};`,
+      );
+
+      if (agendamentos[0].length > 0) {
+        res.json({ data: agendamentos[0] });
+      } else {
+        return res.status(400).json({ message: 'Não há agendamentos' });
+      }
+    } else {
+      return res.status(400).json({ message: 'Token Inválido' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/profissionalAceitaAgendamento', async (req, res) => {
+  try {
+    const jwt = new SimpleJWT();
+    const { access_token } = req.headers;
+
+    if (typeof access_token == 'string') {
+      const decoded = jwt.getPayload(access_token);
+      console.log('decoded: ', decoded.payload);
+
+      await dbInstance.query(
+        `update ${TABLES.agendamentos} set st_agendamento = 'confirmado' where cd_agendamento = ${req.body.cd_agendamento} and fk_cd_profissional = ${decoded.payload?.id}`,
+      );
+      res.json({ message: 'Agendamento confirmado' });
+    } else {
+      return res.status(400).json({ message: 'Token Inválido' });
     }
   } catch (e: any) {
     console.log('err: ', e.message);

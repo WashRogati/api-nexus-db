@@ -74,3 +74,34 @@ Response
   ]
 }
 ```
+
+### Salvar emoção
+
+```curl
+
+curl --location 'http://localhost:8000/salvarEmocoes' \
+--header 'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoicmVzcG9uc2F2ZWwiLCJub21lIjoibHVjYXMiLCJpZCI6MSwiaWF0IjoxNzAxMDQzMzAwLCJleHAiOjE3MTgzMjMzMDB9.jvrblc28K-HNU1GPNLROU0PuNcas-9iYNmMbBrK6BKY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "nm_emocao":  "Nome Emoção teste",
+    "nm_categoria": "Categoria teste",
+    "ds_emocao": "Desc emoções teste"
+}'
+
+```
+
+### Salvar Exercícios
+
+```curl
+
+curl --location 'http://localhost:8000/salvarExercicios' \
+--header 'access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoicmVzcG9uc2F2ZWwiLCJub21lIjoibHVjYXMiLCJpZCI6MSwiaWF0IjoxNzAxMDQzMzAwLCJleHAiOjE3MTgzMjMzMDB9.jvrblc28K-HNU1GPNLROU0PuNcas-9iYNmMbBrK6BKY' \
+--header 'Content-Type: application/json' \
+--data '{
+    "nm_exercicios":  "Nome teste",
+    "nm_categoria": "Categoria teste",
+    "ds_exercicios": "Desc teste",
+    "ds_instrucoes": "Desc instruções teste"
+}'
+
+```

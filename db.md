@@ -107,8 +107,8 @@ create table exercicios(
 
 CREATE TABLE emocoes (
     cd_carta INT PRIMARY KEY AUTO_INCREMENT,
-    nm_emocao VARCHAR(20) NOT NULL,
+    nm_emocao VARCHAR(30) NOT NULL,
     ds_emocao VARCHAR(80) NOT NULL,
-    nm_categoria VARCHAR(15) NOT NULL
+    nm_categoria VARCHAR(60) NOT NULL
 );
 ```

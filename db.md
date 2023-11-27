@@ -1,9 +1,11 @@
+```sql
+
 create database tcc;
 use tcc;
 
-```sql
 
-create table profissionais( --alterado para o plural
+
+create table profissionais(
     cd_profissional int primary key auto_increment,
     nm_profissional varchar(30) not null,
     nm_email varchar(60) not null,
@@ -12,73 +14,63 @@ create table profissionais( --alterado para o plural
     dt_nascimento date not null,
     nr_cpf char(11) not null,
     nr_rg varchar(11) not null,
-    sg_genero char(1) not null, --alterado para sigla de gênero: M Ou F
-    nr_cep varchar(8) not null, --alterado para varchar com tamanho 8, ou seja, deve ignorar o hífem 11740-000 => 11740000
-    nm_rua varchar(128) not null, --alterado tamanho para 128 porque ruas podem ter o nome grande
-    nm_bairro varchar(90) not null, --alterado tamanho para 90
+    sg_genero char(1) not null,
+    nr_cep varchar(8) not null,
+    nm_rua varchar(128) not null,
+    nm_bairro varchar(90) not null,
     sg_uf char(12) not null,
-    nm_cidade varchar(90) not null, --alterado tamanho para 90
+    nm_cidade varchar(90) not null,
     nr_registro_profissional varchar(6) not null,
-    nm_formacao_academica varchar(60) not null, --alterado tamanho para 60
-    nm_instituicao_ensino varchar(90) not null, --alterado tamanho para 90
+    nm_formacao_academica varchar(60) not null,
+    nm_instituicao_ensino varchar(90) not null,
     dt_conclusao date not null,
     ds_experiencia tinytext not null
 );
-```
 
-```sql
 
-create table responsaveis( --alterado para o plural
+create table responsaveis(
     cd_responsavel int primary key auto_increment,
-    nm_responsavel varchar(60) not null, --alterado tamanho para 60
-    nm_email varchar(128) not null, --alterado tamanho para 128
+    nm_responsavel varchar(60) not null,
+    nm_email varchar(128) not null,
     nm_senha varchar(30) not null,
-    nr_telefone varchar(11) not null, --alterado para varchar
+    nr_telefone varchar(11) not null,
     dt_nascimento date not null,
     nr_cpf char(11) not null,
     nr_rg varchar(11) not null,
-    sg_genero char(1) not null, --alterado para sigla de gênero: M Ou F
-    nr_cep varchar(8) not null, --alterado para varchar com tamanho 8, ou seja, deve ignorar o hífem 11740-000 => 11740000
-    nm_rua varchar(128) not null, --alterado tamanho para 128 porque ruas podem ter o nome grande
-    nm_bairro varchar(90) not null, --alterado tamanho para 90
+    sg_genero char(1) not null,
+    nr_cep varchar(8) not null,
+    nm_rua varchar(128) not null,
+    nm_bairro varchar(90) not null,
     sg_uf char(12) not null,
-    nm_cidade varchar(90) not null, --alterado tamanho para 90
+    nm_cidade varchar(90) not null,
     id_conexao bit default false null
 );
 
-```
 
-```sql
 
-create table portadoresTEA( --alterado para o plural
+create table portadorTEA(
     cd_portadorTEA int primary key auto_increment,
-    nm_portador varchar(60) not null,  --alterado tamanho para 60
+    nm_portador varchar(60) not null,
     dt_nascimento date not null,
-    nm_escola varchar(90), --alterado tamanho para 90
+    nm_escola varchar(90),
     hr_escola time,
     ds_medicacoes varchar(100),
     ds_diagnostico tinytext,
     ds_historico tinytext,
     fk_cd_responsavel int,
-    foreign key (fk_cd_responsavel) references responsavel(cd_responsavel)
+    foreign key (fk_cd_responsavel) references responsaveis(cd_responsavel)
 );
 
-```
-
-```sql
 
 create table conexoes(
     cd_conexao int primary key auto_increment,
     fk_cd_profissional int,
     fk_cd_responsavel int,
     dt_conexao datetime,
-    foreign key (fk_cd_responsavel) references responsavel(cd_responsavel),
-    foreign key (fk_cd_profissional) references profissional(cd_profissional)
+    foreign key (fk_cd_responsavel) references responsaveis(cd_responsavel),
+    foreign key (fk_cd_profissional) references profissionais(cd_profissional)
 );
 
-```
-
-```sql
 create table solicitarAgendamento(
     cd_solicitacao int primary key auto_increment,
     fk_cd_responsavel int,
@@ -86,13 +78,11 @@ create table solicitarAgendamento(
     hr_duracao time,
     dt_consulta datetime not null,
     ds_consulta tinytext not null,
-    foreign key (fk_cd_responsavel) references responsavel(cd_responsavel),
-    foreign key (fk_cd_profissional) references profissional(cd_profissional)
+    foreign key (fk_cd_responsavel) references responsaveis(cd_responsavel),
+    foreign key (fk_cd_profissional) references profissionais(cd_profissional)
 );
 
-```
 
-```sql
 create table agendamentos(
     cd_agendamento int primary key auto_increment,
     hr_duracao time not null,
@@ -102,13 +92,11 @@ create table agendamentos(
     fk_cd_responsavel int,
     fk_cd_portadorTEA int,
     st_agendamento enum('confirmado','pendente','cancelado'),
-    foreign key (fk_cd_responsavel) references responsavel(cd_responsavel),
-    foreign key (fk_cd_profissional) references profissional(cd_profissional),
+    foreign key (fk_cd_responsavel) references responsaveis(cd_responsavel),
+    foreign key (fk_cd_profissional) references profissionais(cd_profissional),
     foreign key (fk_cd_portadorTEA) references portadorTEA(cd_portadorTEA)
 );
-```
 
-```sql
 create table exercicios(
     cd_exercicios int primary key auto_increment,
     nm_exercicios varchar(25) not null,
@@ -116,9 +104,7 @@ create table exercicios(
     ds_exercicios varchar(60) not null,
     ds_instrucoes varchar(60) not null
 );
-```
 
-```sql
 CREATE TABLE emocoes (
     cd_carta INT PRIMARY KEY AUTO_INCREMENT,
     nm_emocao VARCHAR(20) NOT NULL,

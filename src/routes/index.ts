@@ -5,9 +5,11 @@ import SimpleJWT from '../jwt';
 
 const router = Router();
 
-router.get('/minharotaget', async (req, res) => {
+router.get('/listarProfissionais', async (req, res) => {
   try {
-    const profissionais = await dbInstance.query('SELECT * FROM profissional;');
+    const profissionais = await dbInstance.query(
+      `SELECT * FROM ${TABLES.profissionais};`,
+    );
     res.json({
       data: profissionais[0],
     });
@@ -53,6 +55,65 @@ router.post('/salvarresponsavel', async (req, res) => {
   }
 });
 
+router.post('/salvarPortador', async (req, res) => {
+  try {
+    const jwt = new SimpleJWT();
+    const { access_token } = req.headers;
+
+    if (typeof access_token == 'string') {
+      const decoded = jwt.getPayload(access_token);
+      console.log('decoded: ', decoded.payload);
+
+      const data = { fk_cd_responsavel: decoded.payload?.id, ...req.body };
+      await dbInstance.insertOne(TABLES.portadores, data);
+      res.json({ message: 'Registro inserido' });
+    } else {
+      return res.status(400).json({ message: 'Token Inválido' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/salvarConexao', async (req, res) => {
+  try {
+    const formatDate = (date: any) => {
+      let d = new Date(date),
+        month = '' + (d.getUTCMonth() + 1), // getUTCMonth() retorna um mês de 0-11
+        day = '' + d.getUTCDate(),
+        year = d.getUTCFullYear();
+
+      // Adiciona um 0 à frente se o mês ou o dia for menor que 10
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    };
+
+    const currentDate = formatDate(new Date()); // Usa a função com a data atual
+
+    const jwt = new SimpleJWT();
+    const { access_token } = req.headers;
+
+    if (typeof access_token == 'string') {
+      const decoded = jwt.getPayload(access_token);
+      console.log('decoded: ', decoded.payload);
+
+      const data = {
+        fk_cd_responsavel: decoded.payload?.id,
+        dt_conexao: currentDate,
+        ...req.body,
+      };
+      await dbInstance.insertOne(TABLES.conexoes, data);
+      res.json({ message: 'Registro inserido' });
+    } else {
+      return res.status(400).json({ message: 'Token Inválido' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
 router.post('/loginProfissional', async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -82,7 +143,7 @@ router.post('/loginResponsavel', async (req, res) => {
   try {
     const { email, senha } = req.body;
     const responsaveis = await dbInstance.query(
-      `SELECT nm_responsavel FROM ${TABLES.responsaveis} where nm_email = '${email}' and nm_senha = '${senha}';`,
+      `SELECT nm_responsavel, cd_responsavel FROM ${TABLES.responsaveis} where nm_email = '${email}' and nm_senha = '${senha}';`,
     );
 
     console.log('responsavel: ', responsaveis[0]);
@@ -92,6 +153,7 @@ router.post('/loginResponsavel', async (req, res) => {
       const token = jwtHelper.createJWT({
         type: 'responsavel',
         nome: responsaveis[0][0].nm_responsavel,
+        id: responsaveis[0][0].cd_responsavel,
       });
 
       res.json({ message: 'logado', access_token: token });

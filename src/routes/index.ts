@@ -21,20 +21,6 @@ router.get('/listarProfissionais', async (req, res) => {
   }
 });
 
-router.post('/minharotapost', async (req, res) => {
-  try {
-    const { name, age, last_name } = req.body;
-    await dbInstance.insertOne('profissional', {
-      name: name,
-      age: age,
-      last_name: last_name,
-    });
-    res.json({ message: 'Registro inserido' });
-  } catch (e: any) {
-    console.log('err: ', e.message);
-  }
-});
-
 router.post('/salvarprofissional', async (req, res) => {
   try {
     /*     const { name, age, last_name } = req.body; */
@@ -106,6 +92,54 @@ router.post('/salvarConexao', async (req, res) => {
       };
       await dbInstance.insertOne(TABLES.conexoes, data);
       res.json({ message: 'Registro inserido' });
+    } else {
+      return res.status(400).json({ message: 'Token Inválido' });
+    }
+  } catch (e: any) {
+    console.log('err: ', e.message);
+  }
+});
+
+router.post('/salvarAgendamento', async (req, res) => {
+  try {
+    const formatDate = (date: any) => {
+      let d = new Date(date),
+        month = '' + (d.getUTCMonth() + 1), // getUTCMonth() retorna um mês de 0-11
+        day = '' + d.getUTCDate(),
+        year = d.getUTCFullYear();
+
+      // Adiciona um 0 à frente se o mês ou o dia for menor que 10
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    };
+
+    const currentDate = formatDate(new Date()); // Usa a função com a data atual
+
+    const jwt = new SimpleJWT();
+    const { access_token } = req.headers;
+
+    if (typeof access_token == 'string') {
+      const decoded = jwt.getPayload(access_token);
+      console.log('decoded: ', decoded.payload);
+
+      const portador = await dbInstance.query(
+        `select cd_portadorTEA from ${TABLES.portadores} where fk_cd_responsavel = ${decoded.payload?.id};`,
+      );
+
+      if (portador[0].length > 0) {
+        const data = {
+          fk_cd_responsavel: decoded.payload?.id,
+          fk_cd_portadorTEA: portador[0][0].cd_portadorTEA,
+          st_agendamento: 'pendente',
+          ...req.body,
+        };
+        await dbInstance.insertOne(TABLES.agendamentos, data);
+        res.json({ message: 'Registro inserido' });
+      } else {
+        return res.status(400).json({ message: 'Portador não encontrado' });
+      }
     } else {
       return res.status(400).json({ message: 'Token Inválido' });
     }
